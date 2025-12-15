@@ -57,6 +57,7 @@ export function PublicHeader() {
 
         <div className="flex items-center gap-2">
           <Button
+            className="bg-transparent hover:bg-secondary dark:hover:bg-secondary hover:text-foreground"
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
