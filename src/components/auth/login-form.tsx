@@ -22,21 +22,45 @@ export function LoginForm() {
     e.preventDefault();
     setIsLoading(true);
 
-    setTimeout(() => {
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ email, name: email.split("@")[0] })
-      );
-      toast({
-        title: "Login successful",
-        description: "Welcome back!",
+    try {
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
 
-      // Redirect to the page user was trying to access, or portfolio by default
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast({
+          title: "Login failed",
+          description: data.error || "Invalid credentials",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Save logged-in user to localStorage (or use JWT in production)
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      toast({
+        title: "Login successful",
+        description: `Welcome back, ${data.user.name}!`,
+      });
+
+      // Redirect after login
       const redirectTo = searchParams.get("redirect") || "/portfolio";
       router.push(redirectTo);
+    } catch (err) {
+      toast({
+        title: "Login failed",
+        description: "Something went wrong.",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
