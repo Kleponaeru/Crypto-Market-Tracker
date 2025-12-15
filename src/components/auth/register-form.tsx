@@ -33,16 +33,34 @@ export function RegisterForm() {
 
     setIsLoading(true);
 
-    // Simulate registration
-    setTimeout(() => {
-      localStorage.setItem("user", JSON.stringify({ email, name }));
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.error);
+      }
+
       toast({
         title: "Account created",
         description: "Welcome to CryptoTracker!",
       });
+
       router.push("/portfolio");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
