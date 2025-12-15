@@ -1,14 +1,51 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  output   = "../src/generated/prisma/client"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model User {
+  id         Int         @id @default(autoincrement())
+  email      String      @unique
+  password   String
+  name       String?
+  createdAt  DateTime    @default(now())
+  portfolio  Portfolio[]
+  watchlists Watchlist[]
+}
+
+model Portfolio {
+  id           Int           @id @default(autoincrement())
+  user         User          @relation(fields: [userId], references: [id])
+  userId       Int
+  coinId       String
+  coinName     String
+  symbol       String
+  amount       Float
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[]
+}
+
+model Transaction {
+  id           Int       @id @default(autoincrement())
+  portfolio    Portfolio @relation(fields: [portfolioId], references: [id])
+  portfolioId  Int
+  type         String
+  amount       Float
+  pricePerUnit Float
+  createdAt    DateTime  @default(now())
+}
+
+model Watchlist {
+  id       Int      @id @default(autoincrement())
+  user     User     @relation(fields: [userId], references: [id])
+  userId   Int
+  coinId   String
+  coinName String
+  symbol   String
+  addedAt  DateTime @default(now())
 }
