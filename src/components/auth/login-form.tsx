@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -16,7 +16,8 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { toast } = useToast();
+
+  const [error, setError] = useState<string>("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,32 +33,20 @@ export function LoginForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        toast({
-          title: "Login failed",
-          description: data.error || "Invalid credentials",
-          variant: "destructive",
-        });
+        toast.error(data.error || "Invalid credentials"); // Use toast.error()
         setIsLoading(false);
         return;
       }
 
-      // Save logged-in user to localStorage (or use JWT in production)
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      toast({
-        title: "Login successful",
-        description: `Welcome back, ${data.user.name}!`,
-      });
+      toast.success(`Welcome back, ${data.user.name}!`); // Use toast.success()
 
-      // Redirect after login
       const redirectTo = searchParams.get("redirect") || "/portfolio";
       router.push(redirectTo);
     } catch (err) {
-      toast({
-        title: "Login failed",
-        description: "Something went wrong.",
-        variant: "destructive",
-      });
+      console.error("Login error:", err);
+      toast.error("Something went wrong. Please try again."); // Use toast.error()
     } finally {
       setIsLoading(false);
     }
@@ -67,6 +56,11 @@ export function LoginForm() {
     <Card>
       <CardContent className="pt-0">
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+              {error}
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
