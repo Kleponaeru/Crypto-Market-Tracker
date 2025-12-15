@@ -187,7 +187,7 @@ export default function CoinDetailPage() {
           </div>
 
           <Card>
-            <CardContent className="pt-6">
+            <CardContent className="pt-0">
               <div className="flex items-baseline gap-3 flex-wrap">
                 <div className="text-4xl md:text-5xl font-bold">
                   {formatCurrency(coin.market_data.current_price.usd)}
