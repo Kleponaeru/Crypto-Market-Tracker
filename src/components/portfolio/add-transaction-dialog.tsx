@@ -20,9 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { addTransaction } from "@/lib/portfolio-storage";
-import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { CreateTransactionPayload } from "../../../types/transaction";
 
 interface Coin {
   id: string;
@@ -49,13 +49,6 @@ export function AddTransactionDialog({
   const [pricePerCoin, setPricePerCoin] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-
-  // useEffect(() => {
-  //   if (open) {
-  //     fetchCoins();
-  //   }
-  // }, [open]);
 
   useEffect(() => {
     if (searchQuery.trim().length < 1) {
@@ -85,40 +78,57 @@ export function AddTransactionDialog({
     return () => clearTimeout(timeout);
   }, [searchQuery]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!selectedCoin || !amount || !pricePerCoin) {
-      toast({
-        title: "Missing information",
+      toast.error("Missing information", {
         description: "Please fill in all required fields.",
-        variant: "destructive",
       });
       return;
     }
 
-    setIsLoading(true);
-
-    addTransaction({
+    const payload: CreateTransactionPayload = {
       coinId: selectedCoin.id,
-      coinSymbol: selectedCoin.symbol,
       coinName: selectedCoin.name,
+      symbol: selectedCoin.symbol,
       type,
-      amount: Number.parseFloat(amount),
-      pricePerCoin: Number.parseFloat(pricePerCoin),
+      amount: Number(amount),
+      pricePerUnit: Number(pricePerCoin),
       date,
-    });
+    };
 
-    toast({
-      title: "Transaction added",
-      description: `${
-        type === "buy" ? "Bought" : "Sold"
-      } ${amount} ${selectedCoin.symbol.toUpperCase()}`,
-    });
+    try {
+      setIsLoading(true);
 
-    setIsLoading(false);
-    resetForm();
-    onSuccess();
+      const wrapped = await toast.promise(
+        fetch("/api/portfolio/transaction", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }),
+        {
+          loading: "Adding transaction...",
+          success: "Transaction added",
+          error: "Failed to add transaction",
+        }
+      );
+
+      const res = await wrapped.unwrap();
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err?.error ?? "Failed to add transaction");
+      }
+
+      resetForm();
+      onSuccess();
+    } catch (err) {
+      // toast already handled by toast.promise
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const resetForm = () => {
