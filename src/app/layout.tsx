@@ -4,8 +4,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
 import AuthProvider from "@/components/providers/session-provider";
+import { GlobalToastHandler } from "@/components/global-toast-handler";
+import { Toaster } from "@/components/ui/sonner";
 
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
@@ -24,7 +25,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="font-sans antialiased">
         <Toaster />
-
         <AuthProvider>
           <ThemeProvider
             attribute="class"
@@ -32,6 +32,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <GlobalToastHandler />
             {children}
           </ThemeProvider>
         </AuthProvider>

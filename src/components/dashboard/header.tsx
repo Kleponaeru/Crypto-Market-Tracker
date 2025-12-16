@@ -18,11 +18,11 @@ export function Header({ user }: HeaderProps) {
 
   const handleLogout = async () => {
     await signOut({ redirect: false });
-    toast({
-      title: "Logged out",
-      description: "See you soon!",
-    });
-    router.replace("/dashboard");
+    // toast({
+    //   title: "Logged out",
+    //   description: "See you soon!",
+    // });
+    router.push("/dashboard?toast=logout");
   };
 
   return (

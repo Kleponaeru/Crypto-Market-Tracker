@@ -40,7 +40,8 @@ export function LoginForm() {
       return;
     }
 
-    router.push(callbackUrl);
+    router.push(`${callbackUrl}?toast=login`);
+
     router.refresh(); // This ensures the session is updated
   };
 

@@ -125,7 +125,9 @@ export function PublicHeader() {
                     focus:bg-secondary
                     focus:text-destructive
                   "
-                  onClick={() => signOut({ callbackUrl: "/dashboard" })}
+                  onClick={() =>
+                    signOut({ callbackUrl: "/dashboard?toast=logout" })
+                  }
                 >
                   <LogOut className="w-4 h-4" />
                   Logout
