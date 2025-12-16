@@ -188,7 +188,12 @@ export function AddTransactionDialog({
                   />
                 </div>
                 {filteredCoins.slice(0, 50).map((coin) => (
-                  <SelectItem key={coin.id} value={coin.id}>
+                  <SelectItem
+                    key={coin.id}
+                    value={coin.id}
+                    className="data-[highlighted]:bg-primary
+                      data-[highlighted]:text-foreground"
+                  >
                     {coin.name} ({coin.symbol.toUpperCase()})
                   </SelectItem>
                 ))}

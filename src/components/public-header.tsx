@@ -36,7 +36,7 @@ export function PublicHeader() {
 
   return (
     <header className="sticky top-0 z-30 bg-card border-b border-border">
-      <div className="container mx-auto flex items-center justify-between h-16 px-4 md:px-6">
+      <div className="container mx-auto flex items-center justify-between h-16">
         <div className="flex items-center gap-8">
           <Logo />
           <nav className="hidden md:flex items-center gap-1">
