@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Moon, Sun, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/hooks/use-toast";
 
 interface HeaderProps {
   user: { email: string; name: string };
@@ -14,7 +13,6 @@ interface HeaderProps {
 export function Header({ user }: HeaderProps) {
   const { theme, setTheme } = useTheme();
   const router = useRouter();
-  const { toast } = useToast();
 
   const handleLogout = async () => {
     await signOut({ redirect: false });

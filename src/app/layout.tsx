@@ -5,7 +5,6 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import AuthProvider from "@/components/providers/session-provider";
-import { GlobalToastHandler } from "@/components/global-toast-handler";
 import { Toaster } from "@/components/ui/sonner";
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -24,7 +23,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="font-sans antialiased">
-        <Toaster />
+        <Toaster
+          position="top-center" // Change position here
+          richColors // Better colors
+          // closeButton // Add close button
+          expand={false} // Don't expand on hover
+          duration={3000}
+        />
         <AuthProvider>
           <ThemeProvider
             attribute="class"
@@ -32,7 +37,6 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <GlobalToastHandler />
             {children}
           </ThemeProvider>
         </AuthProvider>

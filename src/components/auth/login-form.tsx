@@ -40,9 +40,15 @@ export function LoginForm() {
       return;
     }
 
-    router.push(`${callbackUrl}?toast=login`);
+    const urlWithToast = `${callbackUrl}?toast=login`;
+    console.log("🚀 Navigating to:", urlWithToast);
 
-    router.refresh(); // This ensures the session is updated
+    router.push(urlWithToast);
+
+    // Check URL after push
+    setTimeout(() => {
+      console.log("📍 Current URL:", window.location.href);
+    }, 100);
   };
 
   return (
