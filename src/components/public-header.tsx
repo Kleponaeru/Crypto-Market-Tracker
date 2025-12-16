@@ -2,26 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, LayoutDashboard, Wallet, LogIn } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
 
 export function PublicHeader() {
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
-  const [user, setUser] = useState<{ email: string; name: string } | null>(
-    null
-  );
-
-  useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
+  const { data: session, status } = useSession();
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -67,7 +58,16 @@ export function PublicHeader() {
             <span className="sr-only">Toggle theme</span>
           </Button>
 
-          {user ? (
+          {status === "loading" ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hidden sm:flex"
+              disabled
+            >
+              Loading...
+            </Button>
+          ) : session?.user ? (
             <Button
               asChild
               variant="outline"
@@ -76,7 +76,7 @@ export function PublicHeader() {
             >
               <Link href="/portfolio">
                 <Wallet className="w-4 h-4 mr-2" />
-                {user.name}
+                {session.user.name}
               </Link>
             </Button>
           ) : (

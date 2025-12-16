@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { signIn } from "next-auth/react";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -23,33 +24,24 @@ export function LoginForm() {
     e.preventDefault();
     setIsLoading(true);
 
-    try {
-      const res = await fetch("/api/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+    const callbackUrl = searchParams.get("redirect") ?? "/dashboard";
 
-      const data = await res.json();
+    const res = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+      callbackUrl,
+    });
 
-      if (!res.ok) {
-        toast.error(data.error || "Invalid credentials"); // Use toast.error()
-        setIsLoading(false);
-        return;
-      }
+    setIsLoading(false);
 
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      toast.success(`Welcome back, ${data.user.name}!`); // Use toast.success()
-
-      const redirectTo = searchParams.get("redirect") || "/portfolio";
-      router.push(redirectTo);
-    } catch (err) {
-      console.error("Login error:", err);
-      toast.error("Something went wrong. Please try again."); // Use toast.error()
-    } finally {
-      setIsLoading(false);
+    if (!res || res.error) {
+      toast.error("Invalid email or password");
+      return;
     }
+
+    router.push(callbackUrl);
+    router.refresh(); // This ensures the session is updated
   };
 
   return (

@@ -1,5 +1,6 @@
 "use client";
 
+import { signOut, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -15,13 +16,13 @@ export function Header({ user }: HeaderProps) {
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
     toast({
       title: "Logged out",
       description: "See you soon!",
     });
-    router.push("/login");
+    router.replace("/dashboard");
   };
 
   return (
