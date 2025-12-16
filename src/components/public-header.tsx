@@ -1,11 +1,26 @@
 "use client";
 
 import Link from "next/link";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, LayoutDashboard, Wallet, LogIn } from "lucide-react";
+import {
+  Moon,
+  Sun,
+  LayoutDashboard,
+  Wallet,
+  LogIn,
+  LogOut,
+  Settings,
+} from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
@@ -68,17 +83,55 @@ export function PublicHeader() {
               Loading...
             </Button>
           ) : session?.user ? (
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="hidden sm:flex bg-transparent hover:text-foreground hover:bg-secondary dark:hover:bg-secondary"
-            >
-              <Link href="/portfolio">
-                <Wallet className="w-4 h-4 mr-2" />
-                {session.user.name}
-              </Link>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden cursor-pointer sm:flex bg-transparent hover:bg-secondary dark:hover:bg-secondary hover:text-foreground"
+                >
+                  <Wallet className="w-4 h-4 mr-2" />
+                  {session.user.name}
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuItem asChild className="">
+                  <Link
+                    href="/settings"
+                    className="
+                      flex items-center gap-2 cursor-pointer
+                      bg-transparent
+                      data-[highlighted]:bg-secondary
+                      data-[highlighted]:text-foreground
+                      focus:bg-secondary
+                      focus:text-foreground
+                    "
+                  >
+                    <Settings className="w-4 h-4" />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  className="
+                    flex items-center gap-2 cursor-pointer
+                    text-destructive
+                    bg-transparent
+                    data-[highlighted]:bg-secondary
+                    data-[highlighted]:text-destructive
+                    focus:bg-secondary
+                    focus:text-destructive
+                  "
+                  onClick={() => signOut({ callbackUrl: "/dashboard" })}
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <Button asChild variant="default" size="sm" className="text-white">
               <Link href="/login">
