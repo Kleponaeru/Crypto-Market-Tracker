@@ -51,29 +51,39 @@ export function AddTransactionDialog({
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (open) {
-      fetchCoins();
-    }
-  }, [open]);
+  // useEffect(() => {
+  //   if (open) {
+  //     fetchCoins();
+  //   }
+  // }, [open]);
 
-  const fetchCoins = async () => {
-    try {
-      const response = await fetch(
-        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1"
-      );
-      const data = await response.json();
-      setCoins(
-        data.map((coin: any) => ({
-          id: coin.id,
-          symbol: coin.symbol,
-          name: coin.name,
-        }))
-      );
-    } catch (error) {
-      console.error("Error fetching coins:", error);
+  useEffect(() => {
+    if (searchQuery.trim().length < 1) {
+      setCoins([]);
+      return;
     }
-  };
+
+    const timeout = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `https://api.coingecko.com/api/v3/search?query=${searchQuery}`
+        );
+        const data = await res.json();
+
+        setCoins(
+          data.coins.map((coin: any) => ({
+            id: coin.id,
+            symbol: coin.symbol,
+            name: coin.name,
+          }))
+        );
+      } catch (err) {
+        console.error("Search failed", err);
+      }
+    }, 400); // debounce 400ms
+
+    return () => clearTimeout(timeout);
+  }, [searchQuery]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,12 +197,23 @@ export function AddTransactionDialog({
                     className="mb-2"
                   />
                 </div>
-                {filteredCoins.slice(0, 50).map((coin) => (
+                {searchQuery.length === 0 && (
+                  <div className="px-3 py-2 text-sm text-muted-foreground">
+                    Start typing to search coins
+                  </div>
+                )}
+
+                {coins.length === 0 && searchQuery.length > 0 && (
+                  <div className="px-3 py-2 text-sm text-muted-foreground">
+                    No results found
+                  </div>
+                )}
+
+                {coins.slice(0, 20).map((coin) => (
                   <SelectItem
                     key={coin.id}
                     value={coin.id}
-                    className="data-[highlighted]:bg-primary
-                      data-[highlighted]:text-foreground"
+                    className="data-[highlighted]:bg-primary data-[highlighted]:text-foreground"
                   >
                     {coin.name} ({coin.symbol.toUpperCase()})
                   </SelectItem>
