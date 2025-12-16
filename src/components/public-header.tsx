@@ -72,7 +72,7 @@ export function PublicHeader() {
               asChild
               variant="outline"
               size="sm"
-              className="hidden sm:flex bg-transparent"
+              className="hidden sm:flex bg-transparent hover:text-foreground hover:bg-secondary dark:hover:bg-secondary"
             >
               <Link href="/portfolio">
                 <Wallet className="w-4 h-4 mr-2" />
