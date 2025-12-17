@@ -193,11 +193,15 @@ export function EditTransactionDialog({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="flex-1"
+              className="flex-1 hover:bg-secondary dark:hover:bg-secondary hover:text-foreground"
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isLoading} className="flex-1">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="flex-1 text-white"
+            >
               {isLoading ? "Saving..." : "Save Changes"}
             </Button>
           </div>

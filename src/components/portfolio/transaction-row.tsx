@@ -101,11 +101,22 @@ export function TransactionRow({
       </div>
 
       <div className="flex items-center gap-1">
-        <Button variant="ghost" size="icon" onClick={() => onEdit(transaction)}>
-          <Edit2 className="w-4 h-4" />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => onEdit(transaction)}
+          className="bg-secondary hover:bg-foreground dark:hover:bg-primary hover:text-foreground dark:hover:text-white"
+        >
+          <Edit2 className="w-4 h-4 stroke-current" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={handleDelete}>
-          <Trash2 className="w-4 h-4 text-destructive" />
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleDelete}
+          className="bg-secondary hover:bg-foreground dark:hover:bg-destructive hover:text-foreground dark:hover:text-foreground"
+        >
+          <Trash2 className="w-4 h-4 stroke-current" />
         </Button>
       </div>
     </div>
