@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { LoginForm } from "@/components/auth/login-form";
 import { Logo } from "@/components/logo";
 import Link from "next/link";
@@ -13,7 +14,9 @@ export default function LoginPage() {
             Sign in to your account to continue
           </p>
         </div>
-        <LoginForm />
+        <Suspense fallback={null}>
+          <LoginForm />
+        </Suspense>
         <p className="text-center text-sm text-muted-foreground">
           {"Don't have an account? "}
           <Link
