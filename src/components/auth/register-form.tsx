@@ -48,7 +48,7 @@ export function RegisterForm() {
 
       toast({
         title: "Account created",
-        description: "Welcome to CryptoTracker!",
+        description: "Welcome to Portfoly!",
       });
 
       router.push("/portfolio");

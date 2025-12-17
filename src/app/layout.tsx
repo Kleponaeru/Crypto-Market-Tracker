@@ -11,8 +11,11 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "CryptoTracker - Portfolio & Market Dashboard",
+  title: "Portfoly - Portfolio & Market Dashboard",
   description: "Track cryptocurrency markets and manage your portfolio",
+  icons: {
+    icon: "/logo-ly.svg",
+  },
 };
 
 export default function RootLayout({

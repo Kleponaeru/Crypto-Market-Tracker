@@ -6,7 +6,7 @@ export function Logo() {
       <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
         <Bitcoin className="text-white" />
       </div>
-      <span className="text-2xl font-bold">Portfoly</span>
+      <span className="text-2xl font-bold ml-2">PORTFOLY</span>
     </div>
   );
 }
