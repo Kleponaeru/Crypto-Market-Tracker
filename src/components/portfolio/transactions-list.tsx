@@ -10,7 +10,11 @@ import { TransactionRow } from "./transaction-row";
 import type { Transaction } from "../../../types/transaction";
 import { toast } from "sonner";
 
-export function TransactionsList() {
+interface TransactionsListProps {
+  onUpdate?: () => void;
+}
+
+export function TransactionsList({ onUpdate }: TransactionsListProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -51,9 +55,15 @@ export function TransactionsList() {
 
   const handleDialogClose = () => {
     loadTransactions();
+    onUpdate?.(); // Notify parent to refresh
     setAddDialogOpen(false);
     setEditDialogOpen(false);
     setSelectedTransaction(null);
+  };
+
+  const handleTransactionUpdate = () => {
+    loadTransactions();
+    onUpdate?.(); // Notify parent to refresh
   };
 
   return (
@@ -91,7 +101,7 @@ export function TransactionsList() {
                   key={transaction.id}
                   transaction={transaction}
                   onEdit={handleEdit}
-                  onUpdate={loadTransactions}
+                  onUpdate={handleTransactionUpdate}
                 />
               ))}
             </div>

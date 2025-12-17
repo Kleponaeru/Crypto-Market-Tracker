@@ -4,9 +4,9 @@ export function Logo() {
   return (
     <div className="flex items-center gap-2">
       <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-        <Bitcoin />
+        <Bitcoin className="text-white" />
       </div>
-      <span className="text-2xl font-bold">CryptoTracker</span>
+      <span className="text-2xl font-bold">Portfoly</span>
     </div>
   );
 }
