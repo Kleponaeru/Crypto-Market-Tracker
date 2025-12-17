@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id?: string } }
+  { params }: { params: Promise<{ id?: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -14,15 +14,17 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // 1️⃣ Validate transaction ID param
-    if (!params?.id) {
+    const { id } = await params;
+
+    // Validate transaction ID param
+    if (!id) {
       return NextResponse.json(
         { error: "Missing transaction ID" },
         { status: 400 }
       );
     }
 
-    const transactionId = Number(params.id);
+    const transactionId = Number(id);
     if (isNaN(transactionId)) {
       return NextResponse.json(
         { error: "Invalid transaction ID" },
@@ -30,7 +32,7 @@ export async function PUT(
       );
     }
 
-    // 2️⃣ Parse request body
+    // Parse request body
     const body = await req.json();
     const { type, amount, pricePerUnit, date } = body;
 
@@ -53,7 +55,7 @@ export async function PUT(
       return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
 
-    // 3️⃣ Fetch existing transaction with portfolio
+    // Fetch existing transaction with portfolio
     const existing = await prisma.transaction.findUnique({
       where: { id: transactionId },
       include: { portfolio: true },
@@ -66,20 +68,20 @@ export async function PUT(
       );
     }
 
-    // 4️⃣ Ownership check
+    // Ownership check
     if (existing.portfolio.userId !== Number(session.user.id)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const portfolio = existing.portfolio;
 
-    // 5️⃣ Revert old transaction effect
+    //  Revert old transaction effect
     let revertedAmount =
       existing.type === "buy"
         ? Number(portfolio.amount) - existing.amount
         : Number(portfolio.amount) + existing.amount;
 
-    // 6️⃣ Apply new transaction effect
+    // Apply new transaction effect
     let newPortfolioAmount =
       type === "buy"
         ? revertedAmount + parsedAmount
@@ -92,7 +94,7 @@ export async function PUT(
       );
     }
 
-    // 7️⃣ Update transaction
+    // Update transaction
     await prisma.transaction.update({
       where: { id: transactionId },
       data: {
@@ -103,11 +105,100 @@ export async function PUT(
       },
     });
 
-    // 8️⃣ Update portfolio
+    // Update portfolio
     await prisma.portfolio.update({
       where: { id: portfolio.id },
       data: { amount: newPortfolioAmount },
     });
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id?: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Await and validate transaction ID param
+    const { id } = await params;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Missing transaction ID" },
+        { status: 400 }
+      );
+    }
+
+    const transactionId = Number(id);
+    if (isNaN(transactionId)) {
+      return NextResponse.json(
+        { error: "Invalid transaction ID" },
+        { status: 400 }
+      );
+    }
+
+    // Fetch existing transaction with portfolio
+    const existing = await prisma.transaction.findUnique({
+      where: { id: transactionId },
+      include: { portfolio: true },
+    });
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Transaction not found" },
+        { status: 404 }
+      );
+    }
+
+    // Ownership check
+    if (existing.portfolio.userId !== Number(session.user.id)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const portfolio = existing.portfolio;
+
+    // Revert transaction effect from portfolio
+    let newPortfolioAmount =
+      existing.type === "buy"
+        ? Number(portfolio.amount) - existing.amount
+        : Number(portfolio.amount) + existing.amount;
+
+    if (newPortfolioAmount < 0) {
+      return NextResponse.json(
+        { error: "Cannot delete: would result in negative balance" },
+        { status: 400 }
+      );
+    }
+
+    // Delete transaction
+    await prisma.transaction.delete({
+      where: { id: transactionId },
+    });
+
+    // Update portfolio amount (or delete portfolio if amount becomes 0)
+    if (newPortfolioAmount === 0) {
+      await prisma.portfolio.delete({
+        where: { id: portfolio.id },
+      });
+    } else {
+      await prisma.portfolio.update({
+        where: { id: portfolio.id },
+        data: { amount: newPortfolioAmount },
+      });
+    }
 
     return NextResponse.json({ success: true });
   } catch (err) {
