@@ -2,7 +2,7 @@ import type React from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-// import "./globals.css";
+import "./globals.css"; //ignore error line
 import { ThemeProvider } from "@/components/theme-provider";
 import AuthProvider from "@/components/providers/session-provider";
 import { Toaster } from "@/components/ui/sonner";
