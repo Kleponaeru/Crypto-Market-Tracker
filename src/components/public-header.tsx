@@ -6,7 +6,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -19,7 +18,6 @@ import {
   Wallet,
   LogIn,
   LogOut,
-  Settings,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
@@ -35,21 +33,24 @@ export function PublicHeader() {
   ];
 
   return (
-    <header className="sticky top-0 z-30 bg-card border-b border-border">
-      <div className="container mx-auto flex items-center justify-between h-16">
-        <div className="flex items-center gap-8">
+    <header className="sticky top-0 z-30 border-b border-border/70 bg-background/90 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-5 lg:gap-8">
           <Logo />
           <nav className="hidden md:flex items-center gap-1">
             {navigation.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = item.href === "/dashboard"
+                ? pathname === item.href || pathname.startsWith("/coin/")
+                : pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <Link
                   key={item.name}
                   href={item.href}
+                  aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                    "flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-colors duration-200",
                     isActive
-                      ? "bg-primary text-white"
+                      ? "bg-primary/10 text-primary"
                       : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                   )}
                 >
@@ -63,7 +64,7 @@ export function PublicHeader() {
 
         <div className="flex items-center gap-2">
           <Button
-            className="bg-transparent cursor-pointer hover:bg-secondary dark:hover:bg-secondary hover:text-foreground"
+            className="cursor-pointer bg-transparent transition-colors duration-200 hover:bg-secondary hover:text-foreground"
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -88,32 +89,24 @@ export function PublicHeader() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="hidden cursor-pointer sm:flex bg-transparent hover:bg-secondary dark:hover:bg-secondary hover:text-foreground"
+                  aria-label="Open account menu"
+                  className="cursor-pointer bg-transparent hover:bg-secondary hover:text-foreground"
                 >
                   <Wallet className="w-4 h-4 mr-2" />
-                  {session.user.name}
+                  <span className="hidden max-w-32 truncate sm:inline">{session.user.name || "Account"}</span>
                 </Button>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent align="end" className="w-44">
-                <DropdownMenuItem asChild className="">
+                <DropdownMenuItem asChild>
                   <Link
-                    href="/settings"
-                    className="
-                      flex items-center gap-2 cursor-pointer
-                      bg-transparent
-                      data-[highlighted]:bg-secondary
-                      data-[highlighted]:text-foreground
-                      focus:bg-secondary
-                      focus:text-foreground
-                    "
+                    href="/portfolio"
+                    className="flex cursor-pointer items-center gap-2"
                   >
-                    <Settings className="w-4 h-4" />
-                    Settings
+                    <Wallet className="w-4 h-4" />
+                    My portfolio
                   </Link>
                 </DropdownMenuItem>
-
-                <DropdownMenuSeparator />
 
                 <DropdownMenuItem
                   className="
@@ -146,17 +139,20 @@ export function PublicHeader() {
       </div>
 
       {/* Mobile Navigation */}
-      <div className="md:hidden border-t border-border">
+      <div className="border-t border-border/70 bg-background/95 md:hidden">
         <nav className="flex items-center justify-around py-2 px-4">
           {navigation.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = item.href === "/dashboard"
+              ? pathname === item.href || pathname.startsWith("/coin/")
+              : pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <Link
-                key={item.name}
-                href={item.href}
+                  key={item.name}
+                  href={item.href}
+                  aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex flex-col items-center gap-1 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
-                  isActive ? "text-primary" : "text-muted-foreground"
+                  "flex min-w-20 cursor-pointer flex-col items-center gap-1 rounded-xl px-3 py-2 text-xs font-medium transition-colors duration-200",
+                  isActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 )}
               >
                 <item.icon className="w-5 h-5" />

@@ -83,7 +83,7 @@ export function EditTransactionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto rounded-2xl sm:max-w-[520px]">
         <DialogHeader>
           <DialogTitle>Edit Transaction</DialogTitle>
           <DialogDescription>
@@ -94,12 +94,12 @@ export function EditTransactionDialog({
           <div className="space-y-2">
             <Label>Transaction Type</Label>
 
-            <div className="grid grid-cols-2 rounded-lg border p-1">
+            <div className="grid grid-cols-2 rounded-xl border border-border/70 bg-muted/40 p-1">
               <button
                 type="button"
                 onClick={() => setType("buy")}
                 className={cn(
-                  "rounded-md py-2 text-sm font-medium transition",
+                  "min-h-10 cursor-pointer rounded-lg py-2 text-sm font-medium transition-colors duration-200",
                   type === "buy"
                     ? "bg-primary text-white"
                     : "text-muted-foreground hover:bg-muted"
@@ -112,7 +112,7 @@ export function EditTransactionDialog({
                 type="button"
                 onClick={() => setType("sell")}
                 className={cn(
-                  "rounded-md py-2 text-sm font-medium transition",
+                  "min-h-10 cursor-pointer rounded-lg py-2 text-sm font-medium transition-colors duration-200",
                   type === "sell"
                     ? "bg-destructive text-destructive-foreground"
                     : "text-muted-foreground hover:bg-muted"

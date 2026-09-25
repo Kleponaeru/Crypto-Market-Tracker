@@ -59,10 +59,10 @@ export function TransactionRow({
   const totalValue = transaction.amount * transaction.pricePerCoin;
 
   return (
-    <div className="flex items-center gap-4 p-4 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
-      <div className="flex items-center gap-3 flex-1 min-w-0">
+    <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-2 rounded-xl border border-border/60 p-3 transition-colors duration-200 hover:bg-muted/30 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center sm:gap-4 sm:p-4">
+      <div className="flex min-w-0 items-center gap-3">
         <div
-          className={`w-10 h-10 rounded-full flex items-center justify-center ${
+          className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${
             transaction.type === "buy" ? "bg-success/10" : "bg-destructive/10"
           }`}
         >
@@ -86,26 +86,27 @@ export function TransactionRow({
               {transaction.type.toUpperCase()}
             </span>
           </div>
-          <div className="text-sm text-muted-foreground">
+          <div className="truncate text-xs text-muted-foreground sm:text-sm">
             {transaction.amount} {transaction.coinSymbol.toUpperCase()} @{" "}
             {formatCurrency(transaction.pricePerCoin)}
           </div>
         </div>
       </div>
 
-      <div className="hidden sm:block text-right">
-        <div className="font-medium">{formatCurrency(totalValue)}</div>
-        <div className="text-sm text-muted-foreground">
+      <div className="self-center text-right">
+        <div className="text-sm font-semibold tabular-nums sm:text-base">{formatCurrency(totalValue)}</div>
+        <div className="text-xs text-muted-foreground sm:text-sm">
           {formatDate(transaction.createdAt)}
         </div>
       </div>
 
-      <div className="flex items-center gap-1">
+      <div className="col-span-2 flex items-center justify-end gap-1 sm:col-span-1">
         <Button
           variant="ghost"
           size="icon"
+          aria-label={`Edit ${transaction.coinName} transaction`}
           onClick={() => onEdit(transaction)}
-          className="bg-secondary hover:bg-foreground dark:hover:bg-primary hover:text-foreground dark:hover:text-white"
+          className="cursor-pointer rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"
         >
           <Edit2 className="w-4 h-4 stroke-current" />
         </Button>
@@ -113,8 +114,9 @@ export function TransactionRow({
         <Button
           variant="ghost"
           size="icon"
+          aria-label={`Delete ${transaction.coinName} transaction`}
           onClick={handleDelete}
-          className="bg-secondary hover:bg-foreground dark:hover:bg-destructive hover:text-foreground dark:hover:text-foreground"
+          className="cursor-pointer rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
         >
           <Trash2 className="w-4 h-4 stroke-current" />
         </Button>

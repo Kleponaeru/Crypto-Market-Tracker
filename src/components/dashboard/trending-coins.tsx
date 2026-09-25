@@ -1,87 +1,68 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowUpRight, Flame } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import type { TrendingCoin } from "@/types/market";
 
-interface TrendingCoin {
-  item: {
-    id: string;
-    name: string;
-    symbol: string;
-    small: string;
-    price_btc: number;
-    score: number;
-  };
+interface TrendingCoinsProps {
+  coins: TrendingCoin[];
+  loading: boolean;
 }
 
-export function TrendingCoins() {
-  const [trending, setTrending] = useState<TrendingCoin[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchTrending = async () => {
-      try {
-        const response = await fetch(
-          "https://api.coingecko.com/api/v3/search/trending"
-        );
-        const data = await response.json();
-        setTrending(data.coins.slice(0, 7));
-      } catch (error) {
-        console.error("Error fetching trending:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTrending();
-    const interval = setInterval(fetchTrending, 300000);
-    return () => clearInterval(interval);
-  }, []);
-
+export function TrendingCoins({ coins, loading }: TrendingCoinsProps) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="w-5 h-5" />
-          Trending
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
-          {loading ? (
-            <div className="text-center py-8 text-muted-foreground">
-              Loading...
+    <Card className="overflow-hidden rounded-2xl border-border/70 bg-card shadow-sm">
+      <div className="flex items-start justify-between gap-3 border-b border-border/70 p-4 sm:p-5">
+        <div>
+          <div className="flex items-center gap-2">
+            <div className="rounded-xl bg-orange-500/10 p-2 text-orange-600 dark:text-orange-400">
+              <Flame className="size-4" aria-hidden="true" />
             </div>
-          ) : (
-            trending.map((coin, index) => (
-              <Link key={coin.item.id} href={`/coin/${coin.item.id}`}>
-                <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-secondary/50 transition-colors cursor-pointer">
-                  <span className="text-sm text-muted-foreground w-6">
-                    {index + 1}
-                  </span>
-                  <div className="w-8 h-8 relative flex-shrink-0">
-                    <Image
-                      src={coin.item.small || "/placeholder.svg"}
-                      alt={coin.item.name}
-                      fill
-                      className="rounded-full object-cover"
-                    />
+            <h2 className="text-lg font-semibold tracking-tight">Trending searches</h2>
+          </div>
+          <p className="mt-2 text-sm text-muted-foreground">Assets gaining attention on CoinGecko</p>
+        </div>
+        <span className="shrink-0 rounded-full bg-orange-500/10 px-2.5 py-1 text-[11px] font-medium text-orange-700 dark:text-orange-300">Now</span>
+      </div>
+      <CardContent className="p-2 sm:p-3">
+        <ol className="divide-y divide-border/60">
+          {loading ? (
+            Array.from({ length: 6 }).map((_, index) => (
+              <li key={index} className="flex items-center gap-3 p-3">
+                <div className="size-7 animate-pulse rounded-full bg-muted motion-reduce:animate-none" />
+                <div className="flex-1 space-y-2"><div className="h-3 w-28 animate-pulse rounded bg-muted motion-reduce:animate-none" /><div className="h-3 w-16 animate-pulse rounded bg-muted motion-reduce:animate-none" /></div>
+              </li>
+            ))
+          ) : coins.length ? (
+            coins.slice(0, 7).map(({ item }, index) => (
+              <li key={item.id}>
+                <Link
+                  href={`/coin/${item.id}`}
+                  className="group flex min-h-16 items-center gap-3 rounded-xl px-3 py-2.5 transition-colors duration-200 hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+                >
+                  <span className="w-5 shrink-0 text-center text-xs font-medium tabular-nums text-muted-foreground">{index + 1}</span>
+                  <div className="relative size-9 shrink-0 overflow-hidden rounded-full bg-muted">
+                    <Image src={item.small} alt="" fill sizes="36px" className="object-cover" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium truncate">{coin.item.name}</div>
-                    <div className="text-xs text-muted-foreground uppercase">
-                      {coin.item.symbol}
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-medium">{item.name}</div>
+                    <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
+                      <span className="uppercase">{item.symbol}</span>
+                      {item.market_cap_rank && <span>Rank #{item.market_cap_rank}</span>}
                     </div>
                   </div>
-                </div>
-              </Link>
+                  <ArrowUpRight className="size-4 shrink-0 text-muted-foreground opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" aria-hidden="true" />
+                </Link>
+              </li>
             ))
+          ) : (
+            <li className="px-3 py-10 text-center text-sm text-muted-foreground">Trending searches are unavailable right now.</li>
           )}
-        </div>
+        </ol>
       </CardContent>
+      <div className="border-t border-border/60 px-5 py-3 text-xs text-muted-foreground">
+        Based on CoinGecko search activity
+      </div>
     </Card>
   );
 }

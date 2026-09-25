@@ -20,7 +20,7 @@ export function TransactionsList({ onUpdate }: TransactionsListProps) {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
     useState<Transaction | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     loadTransactions();
@@ -68,27 +68,30 @@ export function TransactionsList({ onUpdate }: TransactionsListProps) {
 
   return (
     <>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
-          <CardTitle>Transactions</CardTitle>
-          <Button onClick={() => setAddDialogOpen(true)} className="text-white">
+      <Card className="overflow-hidden rounded-2xl border-border/70 shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-border/70 p-4 sm:p-5">
+          <div>
+            <CardTitle className="text-lg">Recent activity</CardTitle>
+            <p className="mt-1 text-sm text-muted-foreground">Your recorded buys and sells</p>
+          </div>
+          <Button onClick={() => setAddDialogOpen(true)} className="min-h-10 cursor-pointer rounded-xl text-white">
             <Plus className="w-4 h-4 mr-2" />
             Add Transaction
           </Button>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="p-3 sm:p-4">
           {isLoading ? (
             <div className="text-center py-12 text-muted-foreground">
               Loading transactions...
             </div>
           ) : transactions.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <p className="mb-4">No transactions yet</p>
+            <div className="rounded-xl border border-dashed border-border px-4 py-12 text-center text-muted-foreground">
+              <p className="mb-4 font-medium text-foreground">No transactions yet</p>
               <Button
                 onClick={() => setAddDialogOpen(true)}
                 variant="outline"
-                className="bg-transparent hover:bg-secondary dark:hover:bg-secondary hover:text-foreground"
+                className="cursor-pointer rounded-xl"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Your First Transaction

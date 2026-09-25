@@ -111,7 +111,7 @@ export function PortfolioPieChart() {
 
         // 3️⃣ Fetch current prices
         const priceRes = await fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`
+          `/api/crypto/prices?ids=${encodeURIComponent(coinIds)}`
         );
 
         if (!priceRes.ok) {
@@ -197,7 +197,7 @@ export function PortfolioPieChart() {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="rounded-2xl border-border/70 shadow-sm">
         <CardContent className="py-8">
           <p className="text-center text-muted-foreground">
             Loading distribution...
@@ -209,7 +209,7 @@ export function PortfolioPieChart() {
 
   if (error && chartData.length === 0) {
     return (
-      <Card>
+      <Card className="rounded-2xl border-border/70 shadow-sm">
         <CardContent className="py-8">
           <p className="text-center text-destructive">{error}</p>
           <p className="text-center text-muted-foreground text-sm mt-2">
@@ -222,7 +222,7 @@ export function PortfolioPieChart() {
 
   if (chartData.length === 0) {
     return (
-      <Card>
+      <Card className="rounded-2xl border-border/70 shadow-sm">
         <CardContent className="py-8">
           <p className="text-center text-muted-foreground">
             No holdings to display. Add your first transaction to get started.
@@ -233,18 +233,18 @@ export function PortfolioPieChart() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Portfolio Distribution</CardTitle>
+    <Card className="rounded-2xl border-border/70 shadow-sm">
+      <CardHeader className="border-b border-border/70 px-4 py-4 sm:px-5">
+        <CardTitle className="text-lg">Portfolio allocation</CardTitle>
         <p className="text-sm text-muted-foreground">
           Total Value: {formatCurrency(totalValue)}
         </p>
         {error && <p className="text-xs text-muted-foreground mt-1">{error}</p>}
       </CardHeader>
-      <CardContent>
-        <div className="grid md:grid-cols-2 gap-6">
+      <CardContent className="p-4 sm:p-5">
+        <div className="grid gap-6 md:grid-cols-2">
           {/* Pie Chart */}
-          <div className="h-[300px]">
+          <div className="h-[260px] sm:h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -280,7 +280,7 @@ export function PortfolioPieChart() {
             {chartData.map((item, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-3 rounded-lg border bg-card"
+                className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-card p-3 transition-colors hover:bg-muted/30"
               >
                 <div className="flex items-center gap-3">
                   <div

@@ -59,17 +59,10 @@ export function AddTransactionDialog({
     const timeout = setTimeout(async () => {
       try {
         const res = await fetch(
-          `https://api.coingecko.com/api/v3/search?query=${searchQuery}`
+          `/api/crypto/search?q=${encodeURIComponent(searchQuery)}`
         );
-        const data = await res.json();
-
-        setCoins(
-          data.coins.map((coin: any) => ({
-            id: coin.id,
-            symbol: coin.symbol,
-            name: coin.name,
-          }))
-        );
+        const data = (await res.json()) as { coins?: Coin[] };
+        setCoins(data.coins ?? []);
       } catch (err) {
         console.error("Search failed", err);
       }
@@ -148,7 +141,7 @@ export function AddTransactionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto rounded-2xl sm:max-w-[520px]">
         <DialogHeader>
           <DialogTitle>Add Transaction</DialogTitle>
           <DialogDescription>
@@ -156,12 +149,12 @@ export function AddTransactionDialog({
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 rounded-lg border p-1">
+            <div className="grid grid-cols-2 rounded-xl border border-border/70 bg-muted/40 p-1">
             <button
               type="button"
               onClick={() => setType("buy")}
               className={cn(
-                "rounded-md py-2 text-sm font-medium transition",
+                "min-h-10 cursor-pointer rounded-lg py-2 text-sm font-medium transition-colors duration-200",
                 type === "buy"
                   ? "bg-primary text-white"
                   : "text-muted-foreground hover:bg-muted"
@@ -174,7 +167,7 @@ export function AddTransactionDialog({
               type="button"
               onClick={() => setType("sell")}
               className={cn(
-                "rounded-md py-2 text-sm font-medium transition",
+                "min-h-10 cursor-pointer rounded-lg py-2 text-sm font-medium transition-colors duration-200",
                 type === "sell"
                   ? "bg-destructive text-destructive-foreground"
                   : "text-muted-foreground hover:bg-muted"

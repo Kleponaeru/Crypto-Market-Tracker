@@ -94,7 +94,7 @@ export function PortfolioOverview() {
 
         // 3️⃣ Fetch current prices
         const priceRes = await fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`
+          `/api/crypto/prices?ids=${encodeURIComponent(coinIds)}`
         );
 
         if (!priceRes.ok) {
@@ -197,16 +197,16 @@ export function PortfolioOverview() {
 
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-3">
         {[1, 2, 3].map((i) => (
-          <Card key={i}>
+          <Card key={i} className="rounded-2xl border-border/70 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Loading...
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">--</div>
+              <div className="h-8 w-36 animate-pulse rounded-lg bg-muted motion-reduce:animate-none" />
             </CardContent>
           </Card>
         ))}
@@ -215,17 +215,17 @@ export function PortfolioOverview() {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className="grid gap-3 md:grid-cols-3">
       {stats.map((stat, index) => (
-        <Card key={index}>
+        <Card key={index} className="rounded-2xl border-border/70 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md motion-reduce:transform-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               {stat.title}
             </CardTitle>
-            <stat.icon className="w-4 h-4 text-muted-foreground" />
+            <span className="rounded-xl bg-muted/70 p-2 text-primary"><stat.icon className="size-4" /></span>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stat.value}</div>
+            <div className="truncate text-2xl font-semibold tracking-tight tabular-nums">{stat.value}</div>
             {stat.change !== undefined && (
               <div className="flex items-center gap-1 text-xs mt-1">
                 {stat.change >= 0 ? (

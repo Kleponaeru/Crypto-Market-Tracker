@@ -8,7 +8,7 @@ export async function GET() {
       headers: {
         "x-cg-demo-api-key": process.env.COINGECKO_API_KEY || "",
       },
-      next: { revalidate: 0 },
+      next: { revalidate: 60 },
     });
 
     if (!res.ok) {
@@ -20,7 +20,7 @@ export async function GET() {
 
     const data = await res.json();
     return NextResponse.json(data);
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

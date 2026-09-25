@@ -114,7 +114,7 @@ export function HoldingsList() {
 
         // 3️⃣ Fetch prices
         const priceRes = await fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`
+          `/api/crypto/prices?ids=${encodeURIComponent(coinIds)}`
         );
 
         if (!priceRes.ok) {
@@ -130,7 +130,7 @@ export function HoldingsList() {
 
         // 4️⃣ Fetch coin images
         const metaRes = await fetch(
-          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coinIds}`
+          `/api/crypto/markets?ids=${encodeURIComponent(coinIds)}&per_page=${activeHoldings.length}&sparkline=false`
         );
 
         if (!metaRes.ok) {
@@ -226,8 +226,8 @@ export function HoldingsList() {
 
   if (isLoading) {
     return (
-      <Card>
-        <CardContent className="py-8">
+      <Card className="rounded-2xl border-border/70 shadow-sm">
+        <CardContent className="py-10">
           <p className="text-center text-muted-foreground">
             Loading holdings...
           </p>
@@ -238,8 +238,8 @@ export function HoldingsList() {
 
   if (error && holdings.length === 0) {
     return (
-      <Card>
-        <CardContent className="py-8">
+      <Card className="rounded-2xl border-border/70 shadow-sm">
+        <CardContent className="py-10">
           <p className="text-center text-destructive">{error}</p>
           <p className="text-center text-muted-foreground text-sm mt-2">
             {error.includes("Rate limit")
@@ -253,8 +253,8 @@ export function HoldingsList() {
 
   if (holdings.length === 0) {
     return (
-      <Card>
-        <CardContent className="py-8">
+      <Card className="rounded-2xl border-border/70 shadow-sm">
+        <CardContent className="py-10">
           <p className="text-center text-muted-foreground">
             No holdings yet. Add your first transaction to get started.
           </p>
@@ -264,31 +264,31 @@ export function HoldingsList() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Your Holdings</CardTitle>
+    <Card className="overflow-hidden rounded-2xl border-border/70 shadow-sm">
+      <CardHeader className="border-b border-border/70 px-4 py-4 sm:px-5">
+        <CardTitle className="text-lg">Your holdings</CardTitle>
         {error && <p className="text-xs text-muted-foreground mt-1">{error}</p>}
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
+      <CardContent className="p-3 sm:p-4">
+        <div className="space-y-2">
           {holdings.map((holding) => (
             <div
               key={holding.coinId}
-              className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-secondary/50 transition"
+              className="grid min-w-0 gap-3 rounded-xl border border-border/60 p-3 transition-colors duration-200 hover:bg-muted/30 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center sm:gap-5 sm:p-4"
             >
-              <div className="flex items-center gap-3 flex-1">
+              <div className="flex min-w-0 items-center gap-3">
                 {holding.coinImage && (
                   <Image
                     src={holding.coinImage}
                     alt={holding.coinName}
-                    width={32}
-                    height={32}
-                    className="rounded-full"
+                    width={36}
+                    height={36}
+                    className="rounded-full bg-muted"
                   />
                 )}
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-semibold">{holding.coinName}</h3>
+                    <h3 className="truncate font-semibold">{holding.coinName}</h3>
                     <span className="text-xs text-muted-foreground uppercase">
                       {holding.coinSymbol}
                     </span>
@@ -300,18 +300,18 @@ export function HoldingsList() {
                 </div>
               </div>
 
-              <div className="text-right space-y-1">
-                <div className="font-semibold">
+              <div className="flex items-center justify-between gap-4 text-left sm:block sm:text-right">
+                <div className="font-semibold tabular-nums">
                   {formatCurrency(holding.currentValue)}
                 </div>
-                <div className="text-xs text-muted-foreground">
+                <div className="text-xs text-muted-foreground tabular-nums">
                   @ {formatCurrency(holding.currentPrice)}
                 </div>
               </div>
 
-              <div className="text-right ml-6 min-w-[100px]">
+              <div className="flex items-center justify-between gap-4 border-t border-border/60 pt-3 sm:block sm:border-0 sm:pt-0 sm:text-right">
                 <div
-                  className={`font-semibold ${
+                  className={`font-semibold tabular-nums ${
                     holding.profitLoss >= 0
                       ? "text-success"
                       : "text-destructive"

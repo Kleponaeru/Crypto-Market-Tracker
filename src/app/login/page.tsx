@@ -1,32 +1,18 @@
 import { Suspense } from "react";
-import { LoginForm } from "@/components/auth/login-form";
-import { Logo } from "@/components/logo";
 import Link from "next/link";
+import { AuthShell } from "@/components/auth/auth-shell";
+import { LoginForm } from "@/components/auth/login-form";
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md space-y-8">
-        <div className="flex flex-col items-center space-y-2">
-          <Logo />
-          <h1 className="text-3xl font-bold text-balance">Welcome back</h1>
-          <p className="text-muted-foreground text-center text-balance">
-            Sign in to your account to continue
-          </p>
-        </div>
-        <Suspense fallback={null}>
-          <LoginForm />
-        </Suspense>
-        <p className="text-center text-sm text-muted-foreground">
-          {"Don't have an account? "}
-          <Link
-            href="/register"
-            className="text-primary hover:underline font-medium"
-          >
-            Create one
-          </Link>
-        </p>
-      </div>
-    </div>
+    <AuthShell
+      title="Welcome back"
+      description="Sign in to pick up where you left off and keep an eye on your portfolio."
+      footer={<>New to Portfoly? <Link href="/register" className="font-semibold text-primary transition-colors hover:text-primary/80">Create an account</Link></>}
+    >
+      <Suspense fallback={<div className="h-64 animate-pulse rounded-xl bg-muted motion-reduce:animate-none" />}>
+        <LoginForm />
+      </Suspense>
+    </AuthShell>
   );
 }
