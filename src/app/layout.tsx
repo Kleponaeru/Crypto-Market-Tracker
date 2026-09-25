@@ -11,7 +11,7 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Portfoly - Portfolio & Market Dashboard",
+  title: "PonCoin - Portfolio & Market Dashboard",
   description: "Track cryptocurrency markets and manage your portfolio",
   icons: {
     icon: "/logo-ly.svg",
