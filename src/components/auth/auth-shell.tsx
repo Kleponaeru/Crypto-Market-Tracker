@@ -47,7 +47,7 @@ export function AuthShell({ title, description, footer, children }: AuthShellPro
 
         <div className="relative z-10 flex items-center justify-between text-xs text-white/40">
           <span>Market data powered by CoinGecko</span>
-          <span>© {new Date().getFullYear()} PonCoin</span>
+          <span>© {new Date().getFullYear()} PonCoins</span>
         </div>
       </section>
 

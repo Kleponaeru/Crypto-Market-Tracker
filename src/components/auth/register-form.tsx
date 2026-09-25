@@ -58,7 +58,7 @@ export function RegisterForm() {
         return;
       }
 
-      toast.success("Account created. Welcome to PonCoin!");
+      toast.success("Account created. Welcome to PonCoins!");
       router.push("/portfolio");
       router.refresh();
     } catch (caught) {
