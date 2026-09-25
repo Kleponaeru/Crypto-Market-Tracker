@@ -148,7 +148,7 @@ export default function CoinDetailPage() {
   const hasLongDescription = aboutText.length > 420;
 
   const statCards = coin ? [
-    { label: "Market cap", value: currency(coin.market_data.market_cap.usd, true), detail: coin.market_data.market_cap_rank ? `Rank #${coin.market_data.market_cap_rank}` : "Market rank unavailable", icon: BarChart3, tint: "text-violet-600 dark:text-violet-400" },
+    { label: "Market cap", value: currency(coin.market_data.market_cap.usd, true), detail: coin.market_cap_rank ? `Rank #${coin.market_cap_rank}` : "Market rank unavailable", icon: BarChart3, tint: "text-violet-600 dark:text-violet-400" },
     { label: "24h volume", value: currency(coin.market_data.total_volume.usd, true), detail: coin.market_data.market_cap.usd ? `${((coin.market_data.total_volume.usd ?? 0) / coin.market_data.market_cap.usd * 100).toFixed(2)}% of market cap` : "Reported by CoinGecko", icon: Activity, tint: "text-sky-600 dark:text-sky-400" },
     { label: "Fully diluted value", value: currency(coin.market_data.fully_diluted_valuation?.usd, true), detail: "Assumes all tokens are in circulation", icon: Coins, tint: "text-indigo-600 dark:text-indigo-400" },
     { label: "Circulating supply", value: `${amount(coin.market_data.circulating_supply)} ${coin.symbol.toUpperCase()}`, detail: coin.market_data.max_supply ? `${((coin.market_data.circulating_supply ?? 0) / coin.market_data.max_supply * 100).toFixed(1)}% of max supply` : "No fixed max supply reported", icon: Bitcoin, tint: "text-amber-600 dark:text-amber-400" },
